@@ -173,4 +173,19 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>local</id>
+			<properties>
+				<skip.unit.tests>false</skip.unit.tests>
+				<skip.integration.tests>true</skip.integration.tests>
+				<skip.mutation.tests>true</skip.mutation.tests>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+	</profiles>
+
 </project>
