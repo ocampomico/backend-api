@@ -4,5 +4,5 @@ import com.project.backendapi.model.Weather;
 
 public interface WeatherService {
 
-    Weather getCurrentWeather();
+    Weather getCurrentWeather(String city);
 }
