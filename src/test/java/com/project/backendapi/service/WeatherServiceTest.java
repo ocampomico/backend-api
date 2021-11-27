@@ -9,10 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
@@ -20,7 +21,8 @@ import org.springframework.web.util.UriTemplate;
 import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,14 +48,7 @@ public class WeatherServiceTest {
 
     @Before
     public void init() {
-//        uriTemplate = new UriTemplate("http://localhost:8080");
-
-        MockitoAnnotations.initMocks(this);
-
-        weather = Weather.builder()
-                .location("Los Angeles")
-                .temperature(71.2)
-                .build();
+        weather = Weather.builder().temperature(0.0).build();
     }
 
     @Test
@@ -63,23 +58,33 @@ public class WeatherServiceTest {
         // Then it should return the weather
         // For that specific city
 
-//        UriTemplate uriTemplate = new UriTemplate("http://localhost:8080/v1/weather/Los Angeles");
-        URI uri = URI.create("test");
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
 
-        ResponseEntity<String> test = new ResponseEntity<>(weather.toString(), HttpStatus.OK);
-//        when(uriTemplate.expand("LOS ANGELES", "test")).thenReturn(uri);
-//
-//        doReturn(uri).when(uriTemplate).expand(Mockito.anyString(), Mockito.anyString());
-//        doReturn(test).when(restTemplate).getForEntity(Mockito.anyString(), eq(String.class));
-//        doReturn(jsonNode).when(objectMapper).readTree(anyString());
-//
-        when(uriTemplate.expand(anyString(), anyString())).thenReturn(uri);
-        when(restTemplate.getForEntity(uri, String.class)).thenReturn(test);
-        when(objectMapper.readTree(anyString())).thenReturn(jsonNode);
+        URI uri = uriTemplate.expand(eq("test"), any());
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(
+                "some body test",
+                header,
+                HttpStatus.OK
+        );
+
+        JsonNode locationNode, tempNode, feelNode, windNode, descriptionNode;
+        locationNode = tempNode = feelNode = windNode = descriptionNode = mock(JsonNode.class);
+        when(restTemplate.getForEntity(uri, String.class)).thenReturn(responseEntity);
+        when(objectMapper.readTree(responseEntity.getBody())).thenReturn(jsonNode);
 
 
+        when(jsonNode.path(any())).thenReturn(locationNode);
+        when(jsonNode.path(any()).path(any())).thenReturn(tempNode);
+        when(jsonNode.path(any()).path(any())).thenReturn(feelNode);
+        when(jsonNode.path(any()).path(any())).thenReturn(windNode);
+        when(jsonNode.path(any()).get(any())).thenReturn(descriptionNode);
 
-        Weather testWeather = weatherService.getCurrentWeather("Los Angeles");
+        descriptionNode = jsonNode.path(any()).get(any());
+
+        when(descriptionNode.path(any()).path(any())).thenReturn(mock(JsonNode.class));
+
+        Weather testWeather = weatherService.getCurrentWeather("LOS_ANGELES");
         assertEquals(weather.getTemperature(), testWeather.getTemperature());
     }
 }
