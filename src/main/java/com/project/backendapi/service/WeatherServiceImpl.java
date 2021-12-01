@@ -37,11 +37,11 @@ public class WeatherServiceImpl implements WeatherService {
                     .readTree(restTemplate.getForEntity(uri, String.class).getBody());
 
             Weather weather = new Weather();
-            weather.setLocation(root.path("name") == null ? "" : root.path("name").asText());
-            weather.setTemperature(root.path("main").path("temp") == null ? 0.0 : root.path("main").path("temp").asDouble());
-            weather.setFeelsLike(root.path("main").path("feels_like") == null? 0.0 : root.path("main").path("feels_like").asDouble());
-            weather.setWindSpeed(root.path("wind").path("speed") == null ? 0.0 : root.path("wind").path("speed").asDouble());
-            weather.setDescription(root.path("weather").get(0).path("main") == null ? "" : root.path("weather").get(0).path("main").asText());
+            weather.setLocation(root.path("name").asText());
+            weather.setTemperature(root.path("main").path("temp").asDouble());
+            weather.setFeelsLike(root.path("main").path("feels_like").asDouble());
+            weather.setWindSpeed(root.path("wind").path("speed").asDouble());
+            weather.setDescription(root.path("weather").get(0).path("main").asText());
             return weather;
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error parsing JSON", e);
