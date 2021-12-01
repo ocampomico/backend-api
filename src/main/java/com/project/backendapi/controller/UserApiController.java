@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("${openapi.alfrd.base-path:/v1}")
+@RequestMapping("${openapi.project.base-path:/v1}")
 public class UserApiController implements UserApi {
 
     @Autowired

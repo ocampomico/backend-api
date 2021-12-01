@@ -22,6 +22,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
           description: Success
+  '/weather/{city}':
+    description: ''
+    get:
+      parameters:
+        -
+          name: city
+          schema:
+            $ref: '#/components/schemas/City'
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weather'
+          description: Sucessfully get weather information for specified city.
+      description: Get `Weather` for a specific `City`
 components:
   schemas:
     User:
@@ -43,3 +61,33 @@ components:
           type: integer
         message:
           type: string
+    Weather:
+      description: ''
+      type: object
+      properties:
+        description:
+          description: ''
+          type: string
+        windSpeed:
+          format: double
+          description: ''
+          type: number
+        temperature:
+          format: double
+          description: ''
+          type: number
+        feelsLike:
+          format: double
+          description: ''
+          type: number
+        location:
+          description: ''
+          type: string
+    City:
+      description: List of cities
+      enum:
+        - LOS_ANGELES
+        - SAN_DIEGO
+        - HUNTINGTON_BEACH
+        - SAN_FRANCISCO
+      type: string
